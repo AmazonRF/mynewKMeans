@@ -1,0 +1,52 @@
+function  [rmx,rmy] = myKMeans(sample,priorweight,num_node)
+%UNTITLED9 此处显示有关此函数的摘要
+%   此处显示详细说明
+limit=0;
+nsample =  normalizationfor_KMeans(sample);     %已查，没错
+[propervector,propervalue] = cov_forKmeans(nsample);    %已查，没错;
+[weight,weight_propervalue] = findweightvalue(priorweight,nsample,propervalue,limit);
+weight_sample = translationspace(weight,nsample);
+%PCA_weight_sample = myPCA(priorweight,weight_sample);
+ [begin_nodes_x,begin_nodes_y] = findbeginningnodes(weight_sample,priorweight,weight_propervalue,num_node);
+%%
+
+k=2;
+x=weight_sample(:,1);
+y=weight_sample(:,2);
+tx=nsample(:,1);
+ty=nsample(:,2);
+N=length(x);
+ [rmx,rmy] = selectnode(x,y,begin_nodes_x,begin_nodes_y,k);
+
+figure
+%plot(tx,ty,'.k')
+hold on
+
+plot(begin_nodes_x,begin_nodes_y,'o')
+hold on
+f=strcat(mat2str(weight_propervalue(1)),'*','x','+',mat2str(weight_propervalue(2)),'*','y')
+ezplot(f,[min(x),max(x)],[min(y),max(y)]);
+hold on
+f2=strcat(mat2str(-weight_propervalue(2)),'*','x','+',mat2str(weight_propervalue(1)),'*','y');
+set(findobj('Type','line'),'Color','r');
+h=ezplot(f2,[min(x),max(x)],[min(y),max(y)]);
+set(h,'Color','r');
+
+hold on
+ for i=1:N
+     [k,mind]=findclose(rmx,rmy,x(i),y(i));
+    
+     if(k==1)
+          plot(x(i),y(i),'.r');
+          hold on
+     elseif (k==2)
+          plot(x(i),y(i),'.g');
+          hold on
+     else
+          plot(x(i),y(i),'.p');
+          hold on
+     end
+ end
+
+end
+
