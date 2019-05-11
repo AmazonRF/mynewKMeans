@@ -1,0 +1,51 @@
+function [weight,weight_propervalue] = findweightvalue(priorweight,nsample,propervalue,limit)
+%UNTITLED3 此处显示有关此函数的摘要
+%   输入：分类关注方向priorweight=[n1,n2,...]其中n为维数向量下标
+%              nsample=归一化的样本,列数为数据维数
+%               propervalue来源于[propervector,propervalue] = cov_forKmeans(nsample)
+%   输出：[w1,w2,w3,w4...,ws]
+[~,column] = size(nsample);
+t_weight = ones(1,column)*sqrt(column)  ;   %保证权重对向量长度没有影响
+numfor_weight=length(priorweight);
+
+%   将需要加权的维度的特征值与不需要加权的特征值分别保存在两个向量里
+for i=1:numfor_weight
+    main_propervalue(i) = propervalue(priorweight(i));
+    
+end
+    other_propervalue=setdiff(propervalue,main_propervalue);
+    
+s=column;
+s2=numfor_weight;
+
+%计算加权的权a和不需要加权的权b
+for b=1:-0.01:limit
+    %a=(s-(s2-s)*b)/s2;
+    a=s-b;
+    weight_a=sqrt(a/s);
+    weight_b=sqrt(b/s);
+    t_new_weight_a=weight_a* main_propervalue;
+    t_new_weight_b=weight_b* other_propervalue;
+    t1=min(t_new_weight_a);
+    t2=max(t_new_weight_b);
+    if(t1>t2) 
+        break
+    end
+ tt_num=1:column;
+ t_num=setdiff(tt_num,priorweight);
+ 
+ %  将计算好的权重按照原有维度的顺序保存在结果向量里
+for i=1:numfor_weight
+    t_weight(priorweight(i))=weight_a;
+end
+
+for i=1:length(t_num)
+    t_weight(t_num(i))=weight_b;
+end 
+end
+weight=t_weight;
+
+weight_propervalue=weight.*propervalue;
+%weight_propervector=[weight(1)*propervalue(:,1) weight(2)*propervalue(:,2)];
+end
+
