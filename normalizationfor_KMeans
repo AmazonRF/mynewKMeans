@@ -1,0 +1,15 @@
+function nsample =  normalizationfor_KMeans(sample)
+%UNTITLED4 此处显示有关此函数的摘要
+%   此处显示详细说明
+t_dim=size(sample);
+dim=t_dim(2);
+
+%归一化 样本nsample
+%global nsample;
+for i=1:dim
+    sample(:,i)=sample(:,i)/(max(sample(:,i))-min(sample(:,i)));
+    nsample(:,i)=sample(:,i)-mean(sample(:,i));
+ %   nsample(:,i)=(nsample(:,i)-mean(nsample(:,i)))/mean(nsample(:,i));
+end
+end
+
