@@ -1,0 +1,10 @@
+function weight_sample = translationspace(weight,nsample)
+%UNTITLED6 此处显示有关此函数的摘要
+%   输入：nsample为归一化后的数据集 nsample =  normalizationfor_KMeans(sample)  横坐标为维度
+%              weight为加在各个维上的权重 weight = findweightvalue(priorweight,nsample,propervalue)
+%   输出：weight_sample为各个维度上加权后的数据集
+    weight=weight;
+    weight_sample=nsample.*weight;
+%ezplot('3*x+4*y', [-3,3] , [-4,4])
+end
+
