@@ -1,0 +1,30 @@
+function [PCA_weight_sample, ncov]= myPCA(priorweight,nsample)
+%UNTITLED11 此处显示有关此函数的摘要
+%   此处显示详细说明
+
+k=length(priorweight);
+disp(k)
+t_dim=size(nsample);
+dim=t_dim(1);
+if k>dim
+    errordlg('输入的k非法');
+    return
+end
+
+ncov=cov(nsample);
+disp(ncov)
+%计算特征向量
+spe_ars=eig(ncov);
+[spe_arsqu,temp]=eig(ncov);
+disp(spe_arsqu)
+%按照所降的维数排列k个nsample特征向量的下标
+[temp,index]=sort(spe_ars);
+
+len=length(index);
+index=index(len-k+1:len,:);
+
+newaxis=spe_arsqu(:,index);
+disp(newaxis)
+PCA_weight_sample=nsample*newaxis;
+end
+
