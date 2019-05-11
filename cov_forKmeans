@@ -1,0 +1,14 @@
+function [propervector,propervalue] = cov_forKmeans(nsample)
+%UNTITLED2 此处显示有关此函数的摘要
+%   nsample的列为不同维数，每一行为不同的数据
+%	nsample =  normalizationfor_KMeans(sample)
+%计算协方差矩阵
+ncov=cov(nsample);
+%计算特征向量
+propervalue=eig(ncov);
+%disp(propervalue)
+[propervector,temp]=eig(ncov);
+
+
+end
+
