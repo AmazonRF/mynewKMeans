@@ -1,0 +1,101 @@
+function [begin_nodes_x,begin_nodes_y] = findbeginningnodes(weight_sample,priorweight,weight_propervalue,num_node)
+%UNTITLED8 此处显示有关此函数的摘要
+%   此处显示详细说明
+k=length(priorweight);
+
+%以下开始寻找初点
+[m,n]=size(weight_sample);
+for i=1:m
+%  fun=weight_propervalue(1:k);
+%     fun=weight_propervalue(:,1);
+%     fun=weight_propervalue(:,2);
+%   fun垂直于主成分方向
+    fun=[-weight_propervalue(2);weight_propervalue(1)];
+%%%%%%%%%%%%%%%%
+%      %垂直于PCA方向的
+%      disp(fun)
+%     fun=fun*[0 1;1 0]; 
+%     disp(fun)
+    %%%%%%%%%%%%%%%%%%
+    fun=flip(fun);
+    %disp(weight_propervalue)
+    %数据在主成分的垂直方向的上还是下
+    fun=flip(fun);
+    fun=fun';
+    resmatrix(i)=weight_sample(i,:)*fun';
+end
+%upnode downnode内保存下标
+upnode=find(resmatrix>=0);
+
+downnode=find(resmatrix<0);
+
+
+PCA_weight_sample_x=weight_sample(:,1);
+PCA_weight_sample_y=weight_sample(:,2);
+
+%临时，测试
+%目的：找到离垂直主方向两侧均值最近的两个点
+tup=resmatrix(upnode);
+
+ttup=mean(tup);
+tdown=resmatrix(downnode);
+
+ttdown=mean(tdown);
+[~,up_nf]=min(abs(tup-ttup))
+disp('mnnnnnn')
+[~,down_nf]=min(abs(tdown-ttdown))
+
+%   下面开始找点
+%下面if是应对不同奇偶点
+if(mode(num_node)==1)
+    up_t=(num_node-1)/2;
+    down_t=up_t;
+    if(length(upnode)>length(downnode))
+        up_t=up_1+1;
+    else
+        down_t=down_t+1;
+    end
+else
+    up_t=(num_node)/2;
+    down_t=up_t;
+end
+%测试
+% up_nf = unidrnd(length(upnode));
+% down_nf = unidrnd(length(downnode));
+i=1;
+while i<=up_t
+    %测试
+%     up_rx(i)=PCA_weight_sample_x(upnode(up_nf));
+%     up_ry(i)=PCA_weight_sample_y(upnode(up_nf));
+    up_num=find(resmatrix==tup(up_nf));
+    up_rx(i)=PCA_weight_sample_x(up_num);
+    up_ry(i)=PCA_weight_sample_y(up_num);
+    i=i+1;
+    up_nf=up_nf+unidrnd(floor(length(upnode)/k));
+end
+
+i=1;
+while i<=down_t
+   % disp(length(downnode))
+    down_num=find(resmatrix==tdown(down_nf));
+    down_rx(i)=PCA_weight_sample_x(down_num);
+    down_ry(i)=PCA_weight_sample_y(down_num);
+    i=i+1;
+    down_nf=down_nf+unidrnd(floor(length(downnode)/k));
+end
+begin_nodes_x=[up_rx down_rx];
+begin_nodes_y=[up_ry down_ry];
+disp(begin_nodes_x)
+% %检查画图
+ %f=strcat(mat2str(-weight_propervalue(2)),'*','x','+',mat2str(weight_propervalue(1)),'*','y');
+%ezplot(f,[min(PCA_weight_sample_x),max(PCA_weight_sample_x)],[min(PCA_weight_sample_y),max(PCA_weight_sample_y)]);
+%hold on
+% plot(PCA_weight_sample_x(upnode),PCA_weight_sample_y(upnode),'.b')
+% hold on
+% plot(PCA_weight_sample_x(downnode),PCA_weight_sample_y(downnode),'.r')
+% hold on
+% plot(begin_nodes_x,begin_nodes_y,'o')
+
+
+end
+
